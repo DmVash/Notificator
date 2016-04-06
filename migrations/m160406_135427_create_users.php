@@ -10,7 +10,8 @@ class m160406_135427_create_users extends Migration
             'id' => $this->primaryKey(),
             'login' => $this->string(),
             'pass' => $this->string(),
-            'email' => $this->string()
+            'email' => $this->string(),
+            'banned' => $this->smallInteger()
         ]);
     }
 
