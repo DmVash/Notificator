@@ -2,11 +2,11 @@
 
 use yii\db\Migration;
 
-class m160406_135427_create_users extends Migration
+class m160406_135427_create_user extends Migration
 {
     public function up()
     {
-        $this->createTable('users', [
+        $this->createTable('user', [
             'id' => $this->primaryKey(),
             'login' => $this->string(),
             'pass' => $this->string(),

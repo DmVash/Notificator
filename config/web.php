@@ -17,6 +17,7 @@ $config = [
         'user' => [
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,
+            'on send-notification' => ['app\components\NotificationHandler', 'handleNotification']
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',
@@ -38,14 +39,14 @@ $config = [
             ],
         ],
         'db' => require(__DIR__ . '/db.php'),
-        /*
+
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
             ],
         ],
-        */
+
         'authManager' => [
             'class' => 'yii\rbac\PhpManager',
         ],
