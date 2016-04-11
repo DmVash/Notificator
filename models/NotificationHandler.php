@@ -37,16 +37,16 @@ class NotificationHandler extends Component
 
     private function replaceTextPattern($text, $params)
     {
-    //Todo можно сделать получение набора шаблонов из базы
-       $patterns = ['{username}','{sitename}','{articleName}','{shortText}'];
+        //Todo можно сделать получение набора шаблонов из базы
+        $patterns = ['{username}', '{sitename}', '{articleName}', '{shortText}', '{link}'];
         $replacedText = '';
         //foreach($patterns as $pattern){
 
-            if(strpos($text, '{username}'))
-                $text = str_replace('{username}', $params['username'], $text);
-            if(strpos($text, '{sitename}'))
-                $text  = str_replace('{sitename}', Yii::$app->params['siteName'], $text);
-                        //}
+        if (strpos($text, '{username}'))
+            $text = str_replace('{username}', $params['username'], $text);
+        if (strpos($text, '{sitename}'))
+            $text = str_replace('{sitename}', Yii::$app->params['siteName'], $text);
+        //}
 
         return $text;
     }
