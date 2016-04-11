@@ -17,7 +17,7 @@ $config = [
         'user' => [
             'identityClass' => 'app\models\User',
             'enableAutoLogin' => true,
-            'on send-notification' => ['app\components\NotificationHandler', 'handleNotification']
+            //'on send-notification' => ['app\components\NotificationHandler', 'handleNotification']
         ],
         'errorHandler' => [
             'errorAction' => 'site/error',

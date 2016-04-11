@@ -2,8 +2,7 @@
 
 namespace app\models;
 
-use app\components\NotificationHandler;
-use app\components\EventNotification;
+use app\models\NotificationHandler;
 use app\models\User;
 use yii\base\Model;
 use Yii;
@@ -43,10 +42,9 @@ class SignupForm extends  Model
      */
     public function signup()
     {
-        $arr = ['lol'=>'rrr', 'azaz' => 'rr'];
 
-        $arr = ['lol'=>'rrr', 'azaz' => 'rr'];
-        $this->on(NotificationHandler::SEND_NOTIFICATION,['app\components\NotificationHandler','handleNotification'], $arr);
+        //$arr = ['lol'=>'rrr', 'azaz' => 'rr'];
+        //$this->on(NotificationHandler::SEND_NOTIFICATION,['app\models\NotificationHandler','handleNotification'], $arr);
 
         if ($this->validate()) {
             $user = new User();
@@ -58,11 +56,11 @@ class SignupForm extends  Model
             $user->generateAuthKey();
 
 
-            $this->trigger(NotificationHandler::SEND_NOTIFICATION);exit;
+            $this->trigger(NotificationHandler::SEND_NOTIFICATION);
             //Yii::$app->user->trigger(EventNotification::SEND_NOTIFICATION, new EventNotification($arr));exit;
             $user->save(false);
 
-            // нужно добавить следующие три строки:
+            // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ:
             $auth = Yii::$app->authManager;
             $authorRole = $auth->getRole('user');
             $auth->assign($authorRole, $user->getId());
