@@ -44,20 +44,24 @@ class SignupForm extends  Model
     {
 
         //$arr = ['lol'=>'rrr', 'azaz' => 'rr'];
-        //$this->on(NotificationHandler::SEND_NOTIFICATION,['app\models\NotificationHandler','handleNotification'], $arr);
+        //
 
         if ($this->validate()) {
             $user = new User();
 
             $user->username = $this->username;
-
             $user->email = $this->email;
             $user->setPassword($this->password);
             $user->generateAuthKey();
 
-
-            $this->trigger(NotificationHandler::SEND_NOTIFICATION);
+            $params['username'] = $this->username;
+            $params['email'] = '123@123.com';//$this->email;
+            $params['subject'] = 'Регистрация';
+            $params['code'] = 'signup';
+            $this->on(NotificationHandler::SEND_EMAIL_NOTIFICATION, ['app\models\NotificationHandler', 'handleEmailNotification'], $params);
+            $this->trigger(NotificationHandler::SEND_EMAIL_NOTIFICATION);
             //Yii::$app->user->trigger(EventNotification::SEND_NOTIFICATION, new EventNotification($arr));exit;
+            exit;
             $user->save(false);
 
             // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ:
