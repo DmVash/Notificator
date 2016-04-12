@@ -47,9 +47,9 @@ class Notifications extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getNotificationText($code)
+    public static function getNotificationText($code)
     {
-        return $text = $this->findOne(['code' => $code])->text;
+        return static::findOne(['code' => $code])->text;
     }
 
 

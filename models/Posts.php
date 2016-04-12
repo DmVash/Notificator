@@ -48,10 +48,12 @@ class Posts extends \yii\db\ActiveRecord
 
     public function afterSave($insert, $changedAttributes)
     {
-        $params['id'] = $this->user_id;
+        $params['post_id'] = $this->id;
         $params['title'] = $this->title;
+        $params['text'] = $this->text;
         $params['username'] = User::findOne($this->user_id)->username;
         $params['code'] = 'posts';
+        $params['subject'] = 'New article';
         $this->on(NotificationHandler::SEND_POST_NOTIFICATION, ['app\models\NotificationHandler', 'handleEmailNotification'], $params);
         //$this->on(NotificationHandler::SEND_POST_NOTIFICATION, ['app\models\NotificationHandler', 'handleBrowserNotification'], $params);
         $this->trigger(NotificationHandler::SEND_POST_NOTIFICATION);

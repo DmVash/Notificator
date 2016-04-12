@@ -3,17 +3,22 @@
 namespace app\models;
 
 //use yii\base\Event;
+use yii\helpers\Url;
 use Yii;
 use yii\base\Component;
 
 class NotificationHandler extends Component
 {
-    const SEND_EMAIL_NOTIFICATION = 'send-email-notification';
-    const SEND_BROWSER_NOTIFICATION = 'send-browser-notification';
+    //const SEND_EMAIL_NOTIFICATION = 'send-email-notification';
+    //const SEND_BROWSER_NOTIFICATION = 'send-browser-notification';
     const SEND_SIGNUP_NOTIFICATION = 'send-signup-notification';
     const SEND_POST_NOTIFICATION = 'send-posts-notification';
+
     public $browserNoticeType = 'browser';
     public $emailNoticeType = 'email';
+    public $patterns = [
+        '{username}', '{sitename}', '{articleName}', '{shortText}', '{link}'
+    ];
 
     /**
      * Todo:сделать выбор email для отрпавки, реализовать массовую отправку соощбщений,
@@ -35,7 +40,12 @@ class NotificationHandler extends Component
 
     public static function handleBrowserNotification($event)
     {
-
+        $browserNotification = new SendingBrowserNotifications([
+            'title' => $event->data['title'],
+            'code' => $event->data['code'],
+            'sender_id' => Yii::$app->user->id,//Todo изменить на динамический id
+            'text' => $event->data['text'],
+        ]);
     }
 
     private function getNotificationText($code)
@@ -45,19 +55,43 @@ class NotificationHandler extends Component
         return $notification->getNotificationText($code);
     }
 
+
     private function replaceTextPattern($text, $params)
     {
         //Todo можно сделать получение набора шаблонов из базы
         $patterns = ['{username}', '{sitename}', '{articleName}', '{shortText}', '{link}'];
-        $replacedText = '';
-        //foreach($patterns as $pattern){
 
-        if (strpos($text, '{username}'))
-            $text = str_replace('{username}', $params['username'], $text);
-        if (strpos($text, '{sitename}'))
-            $text = str_replace('{sitename}', Yii::$app->params['siteName'], $text);
-        //}
+        foreach($patterns as $pattern){
+            switch($pattern){
+                case '{username}':
+                    $text = str_replace($pattern, $params['username'], $text);
+                    break;
+                case '{sitename}':
+                    $text = str_replace($pattern, Yii::$app->params['siteName'], $text);
+                    break;
+                case '{articleName}':
+                    $text = str_replace($pattern, $params['title'], $text);
+                    break;
+                case '{shortText}':
+                    $text = str_replace($pattern, NotificationHandler::getShortArticleText($params['text']), $text);
+                    break;
+                case '{link}':
+                    $text = str_replace($patterns, Url::to(['@web/post/view', 'id' => $params['post_id']], true), $text);
+                    break;
+
+            }
+        }
 
         return $text;
+    }
+
+    private function getShortArticleText($text)
+    {
+        return substr($text, 0, strpos($text, ' ', 20));
+    }
+
+    public function replaceLink()
+    {
+
     }
 }

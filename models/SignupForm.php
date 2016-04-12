@@ -43,9 +43,6 @@ class SignupForm extends  Model
     public function signup()
     {
 
-        //$arr = ['lol'=>'rrr', 'azaz' => 'rr'];
-        //
-
         if ($this->validate()) {
             $user = new User();
 
@@ -56,11 +53,11 @@ class SignupForm extends  Model
 
             $params['username'] = $this->username;
             $params['email'] = '123@123.com';//$this->email;
-            $params['subject'] = 'Register';
+            $params['title'] = 'Register';
             $params['code'] = 'signup';
             $this->on(NotificationHandler::SEND_SIGNUP_NOTIFICATION, ['app\models\NotificationHandler', 'handleEmailNotification'], $params);
             $this->trigger(NotificationHandler::SEND_SIGNUP_NOTIFICATION);
-            //Yii::$app->user->trigger(EventNotification::SEND_NOTIFICATION, new EventNotification($arr));exit;
+
             $user->save(false);
 
             // ����� �������� ��������� ��� ������:
