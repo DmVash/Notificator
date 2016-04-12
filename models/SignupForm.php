@@ -56,12 +56,11 @@ class SignupForm extends  Model
 
             $params['username'] = $this->username;
             $params['email'] = '123@123.com';//$this->email;
-            $params['subject'] = 'Регистрация';
+            $params['subject'] = 'Register';
             $params['code'] = 'signup';
-            $this->on(NotificationHandler::SEND_EMAIL_NOTIFICATION, ['app\models\NotificationHandler', 'handleEmailNotification'], $params);
-            $this->trigger(NotificationHandler::SEND_EMAIL_NOTIFICATION);
+            $this->on(NotificationHandler::SEND_SIGNUP_NOTIFICATION, ['app\models\NotificationHandler', 'handleEmailNotification'], $params);
+            $this->trigger(NotificationHandler::SEND_SIGNUP_NOTIFICATION);
             //Yii::$app->user->trigger(EventNotification::SEND_NOTIFICATION, new EventNotification($arr));exit;
-            exit;
             $user->save(false);
 
             // пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ:

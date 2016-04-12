@@ -9,9 +9,14 @@ use yii\base\Component;
 class NotificationHandler extends Component
 {
     const SEND_EMAIL_NOTIFICATION = 'send-email-notification';
+    const SEND_BROWSER_NOTIFICATION = 'send-browser-notification';
+    const SEND_SIGNUP_NOTIFICATION = 'send-signup-notification';
+    const SEND_POST_NOTIFICATION = 'send-posts-notification';
+    public $browserNoticeType = 'browser';
+    public $emailNoticeType = 'email';
 
     /**
-     * Todo:необходимо передавать параметр сообщения(заголовок, текст), если параметры не переданы, то использовать стандартное сообщение о регистрации,
+     * Todo:сделать выбор email для отрпавки, реализовать массовую отправку соощбщений,
      * @param $event
      */
 
@@ -26,6 +31,11 @@ class NotificationHandler extends Component
             ->setTextBody(NotificationHandler::replaceTextPattern($text, $event->data))
             ->send();
         //echo 'The notification has been successfully sent to the user' . $event->data['params'];
+    }
+
+    public static function handleBrowserNotification($event)
+    {
+
     }
 
     private function getNotificationText($code)
