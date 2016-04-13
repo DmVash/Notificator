@@ -35,7 +35,7 @@ class SendingBrowserNotifications extends \yii\db\ActiveRecord
     {
         return [
             [['sender_id', 'user_id'], 'integer'],
-            [['code', 'title', 'text', 'type'], 'string', 'max' => 255],
+            [['code', 'title', 'text'], 'string', 'max' => 255],
             //[['type_id'], 'exist', 'skipOnError' => true, 'targetClass' => Notifications::className(), 'targetAttribute' => ['type_id' => 'id']],
         ];
     }
@@ -52,7 +52,7 @@ class SendingBrowserNotifications extends \yii\db\ActiveRecord
             'sender_id' => 'Sender ID',
             'text' => 'Text',
             'user_id' => 'User ID',
-            'type' => 'Type',
+            //'type' => 'Type',
         ];
     }
 
