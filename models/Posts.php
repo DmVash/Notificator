@@ -53,6 +53,7 @@ class Posts extends \yii\db\ActiveRecord
         $params['text'] = $this->text;
         $params['username'] = User::findOne($this->user_id)->username;
         $params['code'] = 'posts';
+        $params['sender'] = $this->user_id;
         $params['all_users'] = 1;
         $params['subject'] = 'New article';
         $this->on(NotificationHandler::SEND_POST_NOTIFICATION, ['app\models\NotificationHandler', 'handleEmailNotification'], $params);

@@ -18,14 +18,14 @@ use Yii;
  * @property Notifications $type0
  * @property ViewNotices[] $viewNotices
  */
-class SendingBrowserNotifications extends \yii\db\ActiveRecord
+class SendingNotifications extends \yii\db\ActiveRecord
 {
     /**
      * @inheritdoc
      */
     public static function tableName()
     {
-        return 'sending_browser_notifications';
+        return 'sending_notifications';
     }
 
     /**
@@ -52,7 +52,7 @@ class SendingBrowserNotifications extends \yii\db\ActiveRecord
             'sender_id' => 'Sender ID',
             'text' => 'Text',
             'user_id' => 'User ID',
-            //'type' => 'Type',
+            'type' => 'Type',
         ];
     }
 
@@ -71,4 +71,6 @@ class SendingBrowserNotifications extends \yii\db\ActiveRecord
     {
         return $this->hasMany(ViewNotices::className(), ['notice_id' => 'id']);
     }
+
+
 }

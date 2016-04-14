@@ -14,11 +14,6 @@ class NotificationHandler extends Component
     const SEND_SIGNUP_NOTIFICATION = 'send-signup-notification';
     const SEND_POST_NOTIFICATION = 'send-posts-notification';
 
-    public $browserNoticeType = 'browser';
-    public $emailNoticeType = 'email';
-    public $patterns = [
-        '{username}', '{sitename}', '{articleName}', '{shortText}', '{link}'
-    ];
 
     /**
      * Todo:сделать выбор email для отрпавки, реализовать массовую отправку соощбщений,
@@ -27,49 +22,84 @@ class NotificationHandler extends Component
 
     public static function handleEmailNotification($event)
     {
+        $usersData = NotificationHandler::getUsersEmailAnId();
+        $event->data['notification_text'] = NotificationHandler::getNotificationText($event->data['code']);
+        $event->data['type'] = 'email';
 
-        if ($event->data['all_users'])
-            $email = NotificationHandler::getUsersEmailAnId('email');
-        else
+        if ($event->data['all_users']) {
+            $email = $usersData['email'];
+            $event->data['ids'] = $usersData['id'];
+            NotificationHandler::saveAllNotifications($event->data);
+        } else {
             $email = $event->data['email'];//Todo изменить для формы создания уведомлений для получения email по ID
+            NotificationHandler::saveNotification($event->data);
+        }
 
-        $text = NotificationHandler::getNotificationText($event->data['code']);
 
         $message = Yii::$app->mailer->compose();
         $message->setFrom(Yii::$app->params['adminEmail']);
         $message->setTo($email)
-            ->setSubject($event->data['subject'])
-            ->setTextBody(NotificationHandler::replaceTextPattern($text, $event->data))
+            ->setSubject($event->data['title'])
+            ->setTextBody(NotificationHandler::replaceTextPattern($event->data['notification_text'], $event->data))
             ->send();
     }
 
     public static function handleBrowserNotification($event)
     {
-        $text = NotificationHandler::getNotificationText($event->data['code']);
+        $usersData = NotificationHandler::getUsersEmailAnId();
+        $event->data['notification_text'] = NotificationHandler::getNotificationText($event->data['code']);
+        $event->data['type'] = 'browser';
 
         if ($event->data['all_users']) {
-            $ids = NotificationHandler::getUsersEmailAnId('id');
-
-            foreach ($ids as $key => $id) {
+            $event->data['ids'] = $usersData['id'];
+            NotificationHandler::saveAllNotifications($event->data);
+           /* foreach ($ids as $key => $id) {
                 $rows[$key]['title'] = $event->data['title'];
                 $rows[$key]['code'] = $event->data['code'];
-                $rows[$key]['sender_id'] = Yii::$app->user->id;
+                $rows[$key]['sender_id'] = $event->data['sender'];
                 $rows[$key]['text'] = NotificationHandler::replaceTextPattern($text, $event->data);
                 $rows[$key]['user_id'] = $id;
-                Yii::$app->db->createCommand()->batchInsert(SendingBrowserNotifications::tableName(), ['title', 'code', 'sender_id', 'text', 'user_id'], $rows)->execute();
-            }
+                Yii::$app->db->createCommand()->batchInsert(SendingNotifications::tableName(), ['title', 'code', 'sender_id', 'text', 'user_id', 'type'], $rows)->execute();
+            }*/
         } else {
-            $browserNotification = new SendingBrowserNotifications([
+            //$event->data['id'] Todo: будет подставляться ID указаный на форме создания уведомлений
+           /* $browserNotification = new SendingNotifications([
                 'title' => $event->data['title'],
                 'code' => $event->data['code'],
-                'sender_id' => Yii::$app->user->id,
+                'sender_id' => $event->data['sender'],
                 'text' => $event->data['text'],
-                'user_id' => '2' //Todo: будет подставляться ID указаный на форме создания уведомлений
+                'user_id' => '2'
             ]);
-            $browserNotification->save();
+            $browserNotification->save();*/
+            NotificationHandler::saveNotification($event->data);
         }
 
 
+    }
+
+    private function saveAllNotifications($params)
+    {
+        foreach ($params['ids'] as $key => $id) {
+            $rows[$key]['title'] = $params['title'];
+            $rows[$key]['code'] = $params['code'];
+            $rows[$key]['sender_id'] = $params['sender'];
+            $rows[$key]['text'] = NotificationHandler::replaceTextPattern($params['notification_text'], $params);
+            $rows[$key]['user_id'] = $id;
+            $rows[$key]['type'] = $params['type'];
+        }
+        Yii::$app->db->createCommand()->batchInsert(SendingNotifications::tableName(), ['title', 'code', 'sender_id', 'text', 'user_id', 'type'], $rows)->execute();
+    }
+
+    private function saveNotification($params)
+    {
+        $browserNotification = new SendingNotifications([
+            'title' => $params['title'],
+            'code' => $params['code'],
+            'sender_id' => $params['sender'],
+            'text' => $params['text'],
+            'user_id' => '2' //Todo: будет подставляться ID указаный на форме создания уведомлений
+        ]);
+        $browserNotification->save();
     }
 
     private function getNotificationText($code)
@@ -114,7 +144,7 @@ class NotificationHandler extends Component
         return substr($text, 0, strpos($text, ' ', 20));
     }
 
-    public function getUsersEmailAnId($param)
+    public function getUsersEmailAnId()
     {
         $data = [];
         $rows = (new \yii\db\Query())
@@ -122,7 +152,8 @@ class NotificationHandler extends Component
             ->from('user')
             ->all();
         foreach ($rows as $row) {
-            $data[] = $row[$param];
+            $data['email'][] = $row['email'];
+            $data['id'][] = $row['id'];
         }
 
         return $data;

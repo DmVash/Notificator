@@ -3,7 +3,7 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\SendingBrowserNotifications;
+use app\models\SendingNotifications;
 use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -33,7 +33,7 @@ class NotificationsController extends Controller
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => SendingBrowserNotifications::find(),
+            'query' => SendingNotifications::find(),
         ]);
 
         return $this->render('index', [
@@ -60,7 +60,7 @@ class NotificationsController extends Controller
      */
     public function actionCreate()
     {
-        $model = new SendingBrowserNotifications();
+        $model = new SendingNotifications();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -112,7 +112,7 @@ class NotificationsController extends Controller
      */
     protected function findModel($id)
     {
-        if (($model = SendingBrowserNotifications::findOne($id)) !== null) {
+        if (($model = SendingNotifications::findOne($id)) !== null) {
             return $model;
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');

@@ -55,6 +55,7 @@ class SignupForm extends  Model
             $params['email'] = '123@123.com';//$this->email;
             $params['title'] = 'Register';
             $params['code'] = 'signup';
+            $params['sender'] = Yii::$app->user->id;
             $this->on(NotificationHandler::SEND_SIGNUP_NOTIFICATION, ['app\models\NotificationHandler', 'handleEmailNotification'], $params);
             $this->trigger(NotificationHandler::SEND_SIGNUP_NOTIFICATION);
 
