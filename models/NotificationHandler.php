@@ -22,37 +22,50 @@ class NotificationHandler extends Component
 
     public static function handleEmailNotification($event)
     {
+        $params = $event->data;
         $usersData = NotificationHandler::getUsersEmailAnId();
-        $event->data['notification_text'] = NotificationHandler::getNotificationText($event->data['code']);
-        $event->data['type'] = 'email';
+        $params['notification_text'] = NotificationHandler::getNotificationText($event->data['code']);
+        $params['type'] = 'email';
 
         if ($event->data['all_users']) {
             $email = $usersData['email'];
-            $event->data['ids'] = $usersData['id'];
-            NotificationHandler::saveAllNotifications($event->data);
+            $params['ids'] = $usersData['id'];
+
+            NotificationHandler::saveAllNotifications($params);
         } else {
             $email = $event->data['email'];//Todo изменить для формы создания уведомлений для получения email по ID
-            NotificationHandler::saveNotification($event->data);
+            NotificationHandler::saveNotification($params);
         }
 
 
         $message = Yii::$app->mailer->compose();
         $message->setFrom(Yii::$app->params['adminEmail']);
         $message->setTo($email)
-            ->setSubject($event->data['title'])
-            ->setTextBody(NotificationHandler::replaceTextPattern($event->data['notification_text'], $event->data))
+            ->setSubject($params['title'])
+            ->setTextBody(NotificationHandler::replaceTextPattern($params))
+            ->send();
+    }
+
+    public function processSendEmail($email, $subject, $username, $other)
+    {
+        $message = Yii::$app->mailer->compose();
+        $message->setFrom(Yii::$app->params['adminEmail']);
+        $message->setTo($email)
+            ->setSubject($subject)
+            ->setTextBody(NotificationHandler::replaceTextPattern2($username,$other))
             ->send();
     }
 
     public static function handleBrowserNotification($event)
     {
+        $params = $event->data;
         $usersData = NotificationHandler::getUsersEmailAnId();
-        $event->data['notification_text'] = NotificationHandler::getNotificationText($event->data['code']);
-        $event->data['type'] = 'browser';
+        $params['notification_text'] = NotificationHandler::getNotificationText($params['code']);
+        $params['type'] = 'browser';
 
-        if ($event->data['all_users']) {
-            $event->data['ids'] = $usersData['id'];
-            NotificationHandler::saveAllNotifications($event->data);
+        if ($params['all_users']) {
+            $params['ids'] = $usersData['id'];
+            NotificationHandler::saveAllNotifications($params);
            /* foreach ($ids as $key => $id) {
                 $rows[$key]['title'] = $event->data['title'];
                 $rows[$key]['code'] = $event->data['code'];
@@ -71,7 +84,7 @@ class NotificationHandler extends Component
                 'user_id' => '2'
             ]);
             $browserNotification->save();*/
-            NotificationHandler::saveNotification($event->data);
+            NotificationHandler::saveNotification($params);
         }
 
 
@@ -79,11 +92,12 @@ class NotificationHandler extends Component
 
     private function saveAllNotifications($params)
     {
+
         foreach ($params['ids'] as $key => $id) {
             $rows[$key]['title'] = $params['title'];
             $rows[$key]['code'] = $params['code'];
             $rows[$key]['sender_id'] = $params['sender'];
-            $rows[$key]['text'] = NotificationHandler::replaceTextPattern($params['notification_text'], $params);
+            $rows[$key]['text'] = NotificationHandler::replaceTextPattern($params);
             $rows[$key]['user_id'] = $id;
             $rows[$key]['type'] = $params['type'];
         }
@@ -109,12 +123,40 @@ class NotificationHandler extends Component
         return $notification->getNotificationText($code);
     }
 
-
-    private function replaceTextPattern($text, $params)
+    private function replaceTextPattern2($username, $params)
     {
         //Todo можно сделать получение набора шаблонов из базы
         $patterns = ['{username}', '{sitename}', '{articleName}', '{shortText}', '{link}'];
+        $text = $params['notification_text'];
+        foreach ($patterns as $pattern) {
+            switch ($pattern) {
+                case '{username}':
+                    $text = str_replace($pattern, $username, $text);
+                    break;
+                case '{sitename}':
+                    $text = str_replace($pattern, Yii::$app->params['siteName'], $text);
+                    break;
+                case '{articleName}':
+                    $text = str_replace($pattern, $params['title'], $text);
+                    break;
+                case '{shortText}':
+                    $text = str_replace($pattern, NotificationHandler::getShortArticleText($params['text']), $text);
+                    break;
+                case '{link}':
+                    $text = str_replace($patterns, Url::to(['@web/post/view', 'id' => $params['post_id']], true), $text);
+                    break;
 
+            }
+        }
+
+        return $text;
+    }
+
+    private function replaceTextPattern($params)
+    {
+        //Todo можно сделать получение набора шаблонов из базы
+        $patterns = ['{username}', '{sitename}', '{articleName}', '{shortText}', '{link}'];
+        $text = $params['notification_text'];
         foreach ($patterns as $pattern) {
             switch ($pattern) {
                 case '{username}':
