@@ -14,12 +14,14 @@ use Yii;
  * @property string $text
  * @property integer $user_id
  * @property string $type
+ * @property integer $all_users
  *
  * @property Notifications $type0
  * @property ViewNotices[] $viewNotices
  */
 class SendingNotifications extends \yii\db\ActiveRecord
 {
+    public $all_users;
     /**
      * @inheritdoc
      */
@@ -53,6 +55,7 @@ class SendingNotifications extends \yii\db\ActiveRecord
             'text' => 'Text',
             'user_id' => 'User ID',
             'type' => 'Type',
+            'all_users' => 'Send to all users'
         ];
     }
 

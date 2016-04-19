@@ -3,6 +3,7 @@
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use app\models\User;
+use app\models\Notifications;
 use \yii\helpers\ArrayHelper;
 
 /* @var $this yii\web\View */
@@ -12,6 +13,11 @@ use \yii\helpers\ArrayHelper;
 $users = User::find()->all();
 $items = ArrayHelper::map($users, 'id', 'username');
 
+$notification = Notifications::find()->select('code');
+foreach($notification as $lol)
+    var_dump($lol);
+exit;
+$rrr = ArrayHelper::map($notification, 'code', 'code')
 ?>
 
 <div class="sending-browser-notifications-form">
@@ -22,11 +28,13 @@ $items = ArrayHelper::map($users, 'id', 'username');
 
     <?= $form->field($model, 'code')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'sender_id')->textInput() ?>
+    <?= $form->field($model, 'sender_id')->dropDownList($items) ?>
 
     <?= $form->field($model, 'text')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'user_id')->textInput() ?>
+    <?= $form->field($model, 'user_id')->dropDownList($items) ?>
+
+    <?= $form->field($model, 'all_users')->checkbox() ?>
 
     <?= $form->field($model, 'type')->dropDownList(['browser'=>'Browser', 'email'=>'Email'], ['multiple' => 'true']) ?>
 

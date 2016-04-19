@@ -23,19 +23,19 @@ class NotificationHandler extends Component
     public static function handleEmailNotification($event)
     {
         $params = $event->data;
-        $usersData = NotificationHandler::getUsersData();
-        $params['notification_text'] = NotificationHandler::getNotificationText($params['code']);
+        $usersData = self::getUsersData();
+        $params['notification_text'] = self::getNotificationText($params['code']);
         $params['type'] = 'email';
 
         if ($event->data['all_users']) {
             $email = $usersData['email'];
             $params['ids'] = $usersData['id'];
-            NotificationHandler::massEmailSend($usersData, $params);
-            NotificationHandler::saveAllNotifications($usersData, $params);
+            self::massEmailSend($usersData, $params);
+            self::saveAllNotifications($usersData, $params);
         } else {
             $email = $params['email'];//Todo изменить для формы создания уведомлений для получения email по ID
-            NotificationHandler::emailSend($params);
-            NotificationHandler::saveNotification($params);
+            self::emailSend($params);
+            self::saveNotification($params);
         }
 
 
@@ -43,23 +43,23 @@ class NotificationHandler extends Component
         $message->setFrom(Yii::$app->params['adminEmail']);
         $message->setTo($email)
             ->setSubject($params['title'])
-            ->setTextBody(NotificationHandler::replaceTextPattern($params))
+            ->setTextBody(self::replaceTextPattern($params))
             ->send();
     }
 
     public static function handleBrowserNotification($event)
     {
         $params = $event->data;
-        $usersData = NotificationHandler::getUsersData();
-        $params['notification_text'] = NotificationHandler::getNotificationText($params['code']);
+        $usersData = self::getUsersData();
+        $params['notification_text'] = self::getNotificationText($params['code']);
         $params['type'] = 'browser';
 
         if ($params['all_users']) {
             $params['ids'] = $usersData['id'];
-            NotificationHandler::saveAllNotifications($usersData, $params);
+            self::saveAllNotifications($usersData, $params);
         } else {
             //$event->data['id'] Todo: будет подставляться ID указаный на форме создания уведомлений
-            NotificationHandler::saveNotification($params);
+            self::saveNotification($params);
         }
     }
 
@@ -70,7 +70,7 @@ class NotificationHandler extends Component
             $message->setFrom(Yii::$app->params['adminEmail']);
             $message->setTo($user['email'])
                 ->setSubject($params['subject'])
-                ->setTextBody(NotificationHandler::replaceTextPattern2($user['username'], $params))
+                ->setTextBody(self::replaceTextPattern2($user['username'], $params))
                 ->send();
         }
 
@@ -84,7 +84,7 @@ class NotificationHandler extends Component
         $message->setFrom(Yii::$app->params['adminEmail']);
         $message->setTo($params['email'])
             ->setSubject($params['title'])
-            ->setTextBody(NotificationHandler::replaceTextPattern($params))
+            ->setTextBody(self::replaceTextPattern($params))
             ->send();
     }
 
@@ -97,11 +97,11 @@ class NotificationHandler extends Component
             $rows[$key]['title'] = $params['title'];
             $rows[$key]['code'] = $params['code'];
             $rows[$key]['sender_id'] = $params['sender'];
-            $rows[$key]['text'] = NotificationHandler::replaceTextPattern2($user['username'], $params);
+            $rows[$key]['text'] = self::replaceTextPattern2($user['username'], $params);
             $rows[$key]['user_id'] = $user['id'];
             $rows[$key]['type'] = $params['type'];
         }
-        Yii::$app->db->createCommand()->batchInsert(SendingNotifications::tableName(), ['title', 'code', 'sender_id', 'text', 'user_id', 'type'], $rows)->execute();
+        Yii::$app->db->createCommand()->batchInsert(self::tableName(), ['title', 'code', 'sender_id', 'text', 'user_id', 'type'], $rows)->execute();
     }
 
     private function saveNotification($params)
@@ -140,7 +140,7 @@ class NotificationHandler extends Component
                     $text = str_replace($pattern, $params['title'], $text);
                     break;
                 case '{shortText}':
-                    $text = str_replace($pattern, NotificationHandler::getShortArticleText($text), $text);
+                    $text = str_replace($pattern, self::getShortArticleText($text), $text);
                     break;
                 case '{link}':
                     $text = str_replace($patterns, Url::to(['@web/post/view', 'id' => $params['post_id']], true), $text);
@@ -169,7 +169,7 @@ class NotificationHandler extends Component
                     $text = str_replace($pattern, $params['title'], $text);
                     break;
                 case '{shortText}':
-                    $text = str_replace($pattern, NotificationHandler::getShortArticleText($params['text']), $text);
+                    $text = str_replace($pattern, self::getShortArticleText($params['text']), $text);
                     break;
                 case '{link}':
                     $text = str_replace($patterns, Url::to(['@web/post/view', 'id' => $params['post_id']], true), $text);
