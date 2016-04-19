@@ -13,6 +13,7 @@ class NotificationHandler extends Component
     //const SEND_BROWSER_NOTIFICATION = 'send-browser-notification';
     const SEND_SIGNUP_NOTIFICATION = 'send-signup-notification';
     const SEND_POST_NOTIFICATION = 'send-posts-notification';
+    const GENERATED_NOTIFICATION = 'send-generated-notification';
 
 
     /**

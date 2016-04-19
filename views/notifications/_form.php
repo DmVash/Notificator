@@ -13,11 +13,14 @@ use \yii\helpers\ArrayHelper;
 $users = User::find()->all();
 $items = ArrayHelper::map($users, 'id', 'username');
 
-$notification = Notifications::find()->select('code');
-foreach($notification as $lol)
-    var_dump($lol);
-exit;
-$rrr = ArrayHelper::map($notification, 'code', 'code')
+$query = new yii\db\Query();
+$data = $query->select(['code'])
+    ->from('notifications')
+    ->distinct()
+    ->all();
+$codes = ArrayHelper::map($data, 'code', 'code');
+
+
 ?>
 
 <div class="sending-browser-notifications-form">
@@ -26,11 +29,11 @@ $rrr = ArrayHelper::map($notification, 'code', 'code')
 
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'code')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'code')->dropDownList($codes) ?>
 
     <?= $form->field($model, 'sender_id')->dropDownList($items) ?>
 
-    <?= $form->field($model, 'text')->textInput(['maxlength' => true]) ?>
+    <?= $form->field($model, 'text')->textarea(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'user_id')->dropDownList($items) ?>
 

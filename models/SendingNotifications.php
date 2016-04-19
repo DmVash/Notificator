@@ -13,7 +13,7 @@ use Yii;
  * @property integer $sender_id
  * @property string $text
  * @property integer $user_id
- * @property string $type
+ * @property array $type
  * @property integer $all_users
  *
  * @property Notifications $type0
@@ -38,6 +38,7 @@ class SendingNotifications extends \yii\db\ActiveRecord
         return [
             [['sender_id', 'user_id'], 'integer'],
             [['code', 'title', 'text'], 'string', 'max' => 255],
+            ['type', 'required', 'message' => 'выберите тип уведомления']
             //[['type_id'], 'exist', 'skipOnError' => true, 'targetClass' => Notifications::className(), 'targetAttribute' => ['type_id' => 'id']],
         ];
     }
@@ -76,4 +77,19 @@ class SendingNotifications extends \yii\db\ActiveRecord
     }
 
 
+    public function sendNotifications()
+    {
+        foreach($this->type as $type){
+            switch($type) {
+                case 'browser':
+                    $this->on(NotificationHandler::SEND_POST_NOTIFICATION, ['app\models\NotificationHandler', 'handleBrowserNotification'], $params);
+                    break;
+                case 'email':
+                    $this->on(NotificationHandler::SEND_POST_NOTIFICATION, ['app\models\NotificationHandler', 'handleEmailNotification'], $params);
+                    break;
+            }
+        }
+
+        exit;
+    }
 }
