@@ -23,17 +23,18 @@ class NotificationHandler extends Component
     public static function handleEmailNotification($event)
     {
         $params = $event->data;
-        $usersData = NotificationHandler::getUsersEmailAnId();
-        $params['notification_text'] = NotificationHandler::getNotificationText($event->data['code']);
+        $usersData = NotificationHandler::getUsersData();
+        $params['notification_text'] = NotificationHandler::getNotificationText($params['code']);
         $params['type'] = 'email';
 
         if ($event->data['all_users']) {
             $email = $usersData['email'];
             $params['ids'] = $usersData['id'];
-
-            NotificationHandler::saveAllNotifications($params);
+            NotificationHandler::massEmailSend($usersData, $params);
+            NotificationHandler::saveAllNotifications($usersData, $params);
         } else {
-            $email = $event->data['email'];//Todo изменить для формы создания уведомлений для получения email по ID
+            $email = $params['email'];//Todo изменить для формы создания уведомлений для получения email по ID
+            NotificationHandler::emailSend($params);
             NotificationHandler::saveNotification($params);
         }
 
@@ -46,59 +47,58 @@ class NotificationHandler extends Component
             ->send();
     }
 
-    public function processSendEmail($email, $subject, $username, $other)
-    {
-        $message = Yii::$app->mailer->compose();
-        $message->setFrom(Yii::$app->params['adminEmail']);
-        $message->setTo($email)
-            ->setSubject($subject)
-            ->setTextBody(NotificationHandler::replaceTextPattern2($username,$other))
-            ->send();
-    }
-
     public static function handleBrowserNotification($event)
     {
         $params = $event->data;
-        $usersData = NotificationHandler::getUsersEmailAnId();
+        $usersData = NotificationHandler::getUsersData();
         $params['notification_text'] = NotificationHandler::getNotificationText($params['code']);
         $params['type'] = 'browser';
 
         if ($params['all_users']) {
             $params['ids'] = $usersData['id'];
-            NotificationHandler::saveAllNotifications($params);
-           /* foreach ($ids as $key => $id) {
-                $rows[$key]['title'] = $event->data['title'];
-                $rows[$key]['code'] = $event->data['code'];
-                $rows[$key]['sender_id'] = $event->data['sender'];
-                $rows[$key]['text'] = NotificationHandler::replaceTextPattern($text, $event->data);
-                $rows[$key]['user_id'] = $id;
-                Yii::$app->db->createCommand()->batchInsert(SendingNotifications::tableName(), ['title', 'code', 'sender_id', 'text', 'user_id', 'type'], $rows)->execute();
-            }*/
+            NotificationHandler::saveAllNotifications($usersData, $params);
         } else {
             //$event->data['id'] Todo: будет подставляться ID указаный на форме создания уведомлений
-           /* $browserNotification = new SendingNotifications([
-                'title' => $event->data['title'],
-                'code' => $event->data['code'],
-                'sender_id' => $event->data['sender'],
-                'text' => $event->data['text'],
-                'user_id' => '2'
-            ]);
-            $browserNotification->save();*/
             NotificationHandler::saveNotification($params);
         }
+    }
 
+    public function massEmailSend($users, $params)
+    {
+        foreach($users as $user){
+            $message = Yii::$app->mailer->compose();
+            $message->setFrom(Yii::$app->params['adminEmail']);
+            $message->setTo($user['email'])
+                ->setSubject($params['subject'])
+                ->setTextBody(NotificationHandler::replaceTextPattern2($user['username'], $params))
+                ->send();
+        }
 
     }
 
-    private function saveAllNotifications($params)
+
+    public function emailSend($params)
+    {
+        //todo: Сделать проверку, если нет конкретного email то отсылать от имени админа
+        $message = Yii::$app->mailer->compose();
+        $message->setFrom(Yii::$app->params['adminEmail']);
+        $message->setTo($params['email'])
+            ->setSubject($params['title'])
+            ->setTextBody(NotificationHandler::replaceTextPattern($params))
+            ->send();
+    }
+
+
+
+    private function saveAllNotifications($users, $params)
     {
 
-        foreach ($params['ids'] as $key => $id) {
+        foreach ($users as $key => $user) {
             $rows[$key]['title'] = $params['title'];
             $rows[$key]['code'] = $params['code'];
             $rows[$key]['sender_id'] = $params['sender'];
-            $rows[$key]['text'] = NotificationHandler::replaceTextPattern($params);
-            $rows[$key]['user_id'] = $id;
+            $rows[$key]['text'] = NotificationHandler::replaceTextPattern2($user['username'], $params);
+            $rows[$key]['user_id'] = $user['id'];
             $rows[$key]['type'] = $params['type'];
         }
         Yii::$app->db->createCommand()->batchInsert(SendingNotifications::tableName(), ['title', 'code', 'sender_id', 'text', 'user_id', 'type'], $rows)->execute();
@@ -140,7 +140,7 @@ class NotificationHandler extends Component
                     $text = str_replace($pattern, $params['title'], $text);
                     break;
                 case '{shortText}':
-                    $text = str_replace($pattern, NotificationHandler::getShortArticleText($params['text']), $text);
+                    $text = str_replace($pattern, NotificationHandler::getShortArticleText($text), $text);
                     break;
                 case '{link}':
                     $text = str_replace($patterns, Url::to(['@web/post/view', 'id' => $params['post_id']], true), $text);
@@ -186,19 +186,20 @@ class NotificationHandler extends Component
         return substr($text, 0, strpos($text, ' ', 20));
     }
 
-    public function getUsersEmailAnId()
+    public function getUsersData()
     {
         $data = [];
         $rows = (new \yii\db\Query())
-            ->select(['id', 'email'])
+            ->select(['id', 'email', 'username'])
             ->from('user')
             ->all();
         foreach ($rows as $row) {
             $data['email'][] = $row['email'];
             $data['id'][] = $row['id'];
+            $data['username'][] = $row['username'];
         }
 
-        return $data;
+        return $rows;
 
     }
 }
