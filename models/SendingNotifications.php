@@ -22,7 +22,7 @@ use Yii;
 class SendingNotifications extends \yii\db\ActiveRecord
 {
     public $all_users;
-    public $article_id;//На случай создания уведомления типа "новая статья", возможность выбра id статьи
+    public $article_id;//РќР° СЃР»СѓС‡Р°Р№ СЃРѕР·РґР°РЅРёСЏ СѓРІРµРґРѕРјР»РµРЅРёСЏ С‚РёРїР° "РЅРѕРІР°СЏ СЃС‚Р°С‚СЊСЏ", РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РІС‹Р±СЂР° id СЃС‚Р°С‚СЊРё
     /**
      * @inheritdoc
      */
@@ -39,7 +39,7 @@ class SendingNotifications extends \yii\db\ActiveRecord
         return [
             [['sender_id', 'user_id', 'article_id'], 'integer'],
             [['code', 'title', 'text'], 'string', 'max' => 255],
-            ['type', 'required', 'message' => '�������� ��� �����������'],
+            ['type', 'required', 'message' => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ'],
             ['all_users', 'boolean']
             //[['type_id'], 'exist', 'skipOnError' => true, 'targetClass' => Notifications::className(), 'targetAttribute' => ['type_id' => 'id']],
         ];
@@ -52,10 +52,10 @@ class SendingNotifications extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'title' => 'Название',
+            'title' => 'РќР°Р·РІР°РЅРёРµ',
             'type_id' => 'Type ID',
             'sender_id' => 'Sender ID',
-            'article_id' => 'Выбор статьи',
+            'article_id' => 'Р’С‹Р±РѕСЂ СЃС‚Р°С‚СЊРё',
             'text' => 'Text',
             'user_id' => 'User ID',
             'type' => 'Type',
@@ -84,8 +84,11 @@ class SendingNotifications extends \yii\db\ActiveRecord
     {
         $params['notification_text'] = $this->text;
         $params['subject'] = $this->title;
-        if(!$this->all_users)
+        if(!$this->all_users){
             $params['user_id'] = $this->user_id;
+            $params['username'] = User::findOne($this->user_id)->username;
+            $params['email'] = User::findOne($this->user_id)->email;
+        }
         $params['all_users'] = $this->all_users;
         if($this->code == 'posts') {
             $params['post_id'] = $this->article_id;
@@ -94,18 +97,18 @@ class SendingNotifications extends \yii\db\ActiveRecord
         }
         $params['sender'] = $this->sender_id;
         $params['code'] = $this->code;
-        $params['generated'] = 1;
+        $params['generated'] = true;
         foreach($this->type as $type){
             switch($type) {
                 case 'browser':
-                    $this->on(NotificationHandler::SEND_POST_NOTIFICATION, ['app\models\NotificationHandler', 'handleBrowserNotification'], $params);
+                    $this->on(NotificationHandler::SEND_GENERATED_NOTIFICATION, ['app\models\NotificationHandler', 'handleBrowserNotification'], $params);
                     break;
                 case 'email':
-                    $this->on(NotificationHandler::SEND_POST_NOTIFICATION, ['app\models\NotificationHandler', 'handleEmailNotification'], $params);
+                    $this->on(NotificationHandler::SEND_GENERATED_NOTIFICATION, ['app\models\NotificationHandler', 'handleEmailNotification'], $params);
                     break;
             }
         }
+        $this->trigger(NotificationHandler::SEND_GENERATED_NOTIFICATION);
 
-        exit;
     }
 }

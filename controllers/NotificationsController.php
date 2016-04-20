@@ -65,6 +65,9 @@ class NotificationsController extends Controller
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $model->sendNotifications();
             //return $this->redirect(['view', 'id' => $model->id]);
+            return $this->render('create', [
+                'model' => $model,
+            ]);
         } else {
             return $this->render('create', [
                 'model' => $model,

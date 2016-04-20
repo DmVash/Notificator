@@ -59,8 +59,8 @@ $codes = ArrayHelper::map($data, 'code', 'code');
     </div>
 
     <?php ActiveForm::end(); ?>
-    <?php echo Html::script("/* Actual JavaScript code. */"); ?>
-    <?= $this->registerJs('$(document).ready(function(){
+
+<!--    --><?/*= $this->registerJs('$(document).ready(function(){
     checkNotificationCode($(\'#sendingnotifications-code\').val());
 
 
@@ -76,7 +76,7 @@ function checkNotificationCode(value) {
         $(\'#sendingnotifications-article_id\').prop(\'disabled\', false);
         $(\'.field-sendingnotifications-article_id\').show();
     }
-}');?>
+}');*/?>
 </div>
 <script>
     $(document).ready(function(){
