@@ -22,6 +22,7 @@ use Yii;
 class SendingNotifications extends \yii\db\ActiveRecord
 {
     public $all_users;
+    public $article_id;//На случай создания уведомления типа "новая статья", возможность выбра id статьи
     /**
      * @inheritdoc
      */
@@ -36,9 +37,10 @@ class SendingNotifications extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['sender_id', 'user_id'], 'integer'],
+            [['sender_id', 'user_id', 'article_id'], 'integer'],
             [['code', 'title', 'text'], 'string', 'max' => 255],
-            ['type', 'required', 'message' => '�������� ��� �����������']
+            ['type', 'required', 'message' => '�������� ��� �����������'],
+            ['all_users', 'boolean']
             //[['type_id'], 'exist', 'skipOnError' => true, 'targetClass' => Notifications::className(), 'targetAttribute' => ['type_id' => 'id']],
         ];
     }
@@ -50,9 +52,10 @@ class SendingNotifications extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'title' => 'Title',
+            'title' => 'Название',
             'type_id' => 'Type ID',
             'sender_id' => 'Sender ID',
+            'article_id' => 'Выбор статьи',
             'text' => 'Text',
             'user_id' => 'User ID',
             'type' => 'Type',
@@ -63,10 +66,10 @@ class SendingNotifications extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    /*public function getType0()
+    public function getType0()
     {
         return $this->hasOne(Notifications::className(), ['id' => 'type_id']);
-    }*/
+    }
 
     /**
      * @return \yii\db\ActiveQuery
@@ -79,6 +82,19 @@ class SendingNotifications extends \yii\db\ActiveRecord
 
     public function sendNotifications()
     {
+        $params['notification_text'] = $this->text;
+        $params['subject'] = $this->title;
+        if(!$this->all_users)
+            $params['user_id'] = $this->user_id;
+        $params['all_users'] = $this->all_users;
+        if($this->code == 'posts') {
+            $params['post_id'] = $this->article_id;
+            $params['article_title'] = Posts::findOne($this->article_id)->title;
+            $params['article_text'] = Posts::findOne($this->article_id)->text;
+        }
+        $params['sender'] = $this->sender_id;
+        $params['code'] = $this->code;
+        $params['generated'] = 1;
         foreach($this->type as $type){
             switch($type) {
                 case 'browser':

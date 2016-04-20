@@ -49,8 +49,8 @@ class Posts extends \yii\db\ActiveRecord
     public function afterSave($insert, $changedAttributes)
     {
         $params['post_id'] = $this->id;
-        $params['title'] = $this->title;
-        $params['text'] = $this->text;
+        $params['article_title'] = $this->title;
+        $params['article_text'] = $this->text;
         $params['username'] = User::findOne($this->user_id)->username;
         $params['code'] = 'posts';
         $params['sender'] = $this->user_id;
