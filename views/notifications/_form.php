@@ -43,7 +43,12 @@ $codes = ArrayHelper::map($data, 'code', 'code');
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($model, 'text')->textarea(['maxlength' => true]) ?>
-
+    <div class="col-lg-offset-1 for-posts" style="color:#999;">
+        Вы можете использовать следующие параметры: {username} - Имя пользователя, {articleName} - название статьи, {shortText} - короткий текст статьи, {link}, сслыка на статью
+    </div>
+    <div class="col-lg-offset-1 for-signup" style="color:#999;">
+        Вы можете использовать следующие параметры: {username} - Имя пользователя, {sitename} - название сайта
+    </div>
     <?= $form->field($model, 'user_id')->dropDownList($items) ?>
 
     <?= $form->field($model, 'article_id')->dropDownList($article) ?><!-- Скрыть поле при смене кода на не posts-->

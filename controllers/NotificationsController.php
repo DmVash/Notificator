@@ -8,6 +8,8 @@ use yii\data\ActiveDataProvider;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use app\models\ViewedNotifications;
+use yii\filters\AccessControl;
 
 /**
  * NotificationsController implements the CRUD actions for SendingBrowserNotifications model.
@@ -16,11 +18,33 @@ class NotificationsController extends Controller
 {
     public function behaviors()
     {
-        return [
+        /*return [
             'verbs' => [
                 'class' => VerbFilter::className(),
                 'actions' => [
                     'delete' => ['post'],
+                ],
+            ],
+        ];*/
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'rules' => [
+                    [
+                        'actions' => ['login', 'error'],
+                        'allow' => true,
+                    ],
+                    [
+                        'actions' => ['logout', 'view',''],
+                        'allow' => true,
+                        'roles' => ['admin'],
+                    ],
+                    [
+                        'actions' => ['logout', 'index',],
+                        'allow' => true,
+                        'roles' => ['user'],
+                    ],
+
                 ],
             ],
         ];
@@ -48,6 +72,12 @@ class NotificationsController extends Controller
      */
     public function actionView($id)
     {
+        $viewed = new ViewedNotifications();
+        if(!$viewed->findOne(['user_id' => Yii::$app->user->id, 'notice_id' => $id])) {
+            $viewed->user_id = Yii::$app->user->id;
+            $viewed->notice_id = $id;
+            $viewed->save();
+        }
         return $this->render('view', [
             'model' => $this->findModel($id),
         ]);
