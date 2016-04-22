@@ -52,7 +52,7 @@ class SignupForm extends  Model
             $user->generateAuthKey();
 
             $params['username'] = $this->username;
-            $params['email'] = '123@123.com';//$this->email;
+            $params['email'] = $this->email;
             $params['title'] = 'Register';
             $params['code'] = 'signup';
             $params['sender'] = Yii::$app->user->id;

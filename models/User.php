@@ -67,7 +67,7 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
-            [['username','password'], 'required']
+            [['username'], 'required']
         ];
     }
 
@@ -107,7 +107,12 @@ class User extends ActiveRecord implements IdentityInterface
      */
     public static function findByUsername($username)
     {
-        return static::findOne(['username' => $username, 'status' => self::STATUS_ACTIVE]);
+        return static::findOne(['username' => $username]);
+    }
+
+    public static function getStatus($username)
+    {
+        return static::findOne(['username' => $username])->status;
     }
 
     /**
@@ -118,6 +123,20 @@ class User extends ActiveRecord implements IdentityInterface
         return $this->getPrimaryKey();
     }
 
+    public function sendBanNotification()
+    {
+        $params['username'] = $this->username;
+        $params['email'] = $this->email;
+        $params['title'] = 'Account ban';
+        $params['code'] = 'ban';
+        $params['sender'] = Yii::$app->user->id;
+        $this->on(NotificationHandler::SEND_BAN_NOTIFICATION, ['app\models\NotificationHandler', 'handleEmailNotification'], $params);
+
+        if($this->status === self::STATUS_DELETED){
+
+        }
+
+    }
     /**
      * @inheritdoc
      */

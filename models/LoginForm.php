@@ -28,7 +28,9 @@ class LoginForm extends Model
             // rememberMe must be a boolean value
             ['rememberMe', 'boolean'],
             // password is validated by validatePassword()
+            ['username', 'validateStatus'],
             ['password', 'validatePassword'],
+
         ];
     }
 
@@ -44,9 +46,18 @@ class LoginForm extends Model
         if (!$this->hasErrors()) {
             $user = $this->getUser();
 
+
+
             if (!$user || !$user->validatePassword($this->password)) {
                 $this->addError($attribute, 'Incorrect username or password.');
             }
+        }
+    }
+
+    public function validateStatus($attribute, $params)
+    {
+        if($this->getStatus() == USER::STATUS_DELETED){
+            $this->addError($attribute, 'You are baned by admin');
         }
     }
 
@@ -74,5 +85,12 @@ class LoginForm extends Model
         }
 
         return $this->_user;
+    }
+
+    public function getStatus()
+    {
+        if ($this->_user === false) {
+            return User::getStatus($this->username);
+        }
     }
 }
