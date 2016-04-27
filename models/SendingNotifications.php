@@ -22,7 +22,7 @@ use Yii;
 class SendingNotifications extends \yii\db\ActiveRecord
 {
     public $all_users;
-    public $article_id;//РќР° СЃР»СѓС‡Р°Р№ СЃРѕР·РґР°РЅРёСЏ СѓРІРµРґРѕРјР»РµРЅРёСЏ С‚РёРїР° "РЅРѕРІР°СЏ СЃС‚Р°С‚СЊСЏ", РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ РІС‹Р±СЂР° id СЃС‚Р°С‚СЊРё
+    public $article_id;
     /**
      * @inheritdoc
      */
@@ -39,7 +39,7 @@ class SendingNotifications extends \yii\db\ActiveRecord
         return [
             [['sender_id', 'user_id', 'article_id'], 'integer'],
             [['code', 'title', 'text'], 'string', 'max' => 255],
-            ['type', 'required', 'message' => 'пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ'],
+            ['type', 'required', 'message' => 'Выберите тип уведомления'],
             ['all_users', 'boolean']
             //[['type_id'], 'exist', 'skipOnError' => true, 'targetClass' => Notifications::className(), 'targetAttribute' => ['type_id' => 'id']],
         ];

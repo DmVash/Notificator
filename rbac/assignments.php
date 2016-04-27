@@ -19,7 +19,7 @@ return [
         'user',
     ],
     1 => [
-        'user',
+        'admin',
     ],
     2 => [
         'admin',

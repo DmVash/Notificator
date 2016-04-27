@@ -37,9 +37,6 @@ AppAsset::register($this);
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             ['label' => 'Home', 'url' => ['/site/index']],
-            \Yii::$app->user->can('createNotice') ? (['label' => 'Создание уведомлений', 'url' => ['/notifications/admin']]) : (['label' => 'Просмотр уведомлений', 'url' => ['/notifications/index']]),
-            \Yii::$app->user->can('createPost') ? (['label' => 'Создание и редактирование постов', 'url' => ['/posts/index']]): '',
-            \Yii::$app->user->can('banUser') ? (['label' => 'Пользователи', 'url' => ['/user/index']]): '',
             ['label' => 'Signup', 'url' => ['/site/signup']],
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/site/login']]
@@ -51,7 +48,9 @@ AppAsset::register($this);
                     ['class' => 'btn btn-link']
                 )
                 . Html::endForm()
-                . '</li>'
+                . '</li>'.\Yii::$app->user->can('createNotice') ? (['label' => 'Edit notification', 'url' => ['/notifications/admin']]) : (['label' => 'View notifications', 'url' => ['/notifications/index']])
+                . \Yii::$app->user->can('createPost') ? (['label' => 'Posts', 'url' => ['/posts/index']]): ''
+                . \Yii::$app->user->can('banUser') ? (['label' => 'Users', 'url' => ['/user/index']]): ''
             )
         ],
     ]);

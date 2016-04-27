@@ -25,7 +25,17 @@ $this->params['breadcrumbs'][] = $this->title;
             'id',
             'username',
             'email:email',
-             'status',
+             [
+                 'attribute' => 'status',
+                 'value' => function($model){
+                     if($model->status == \app\models\User::STATUS_ACTIVE){
+                         return 'Active';
+                     }else{
+                         return 'Baned';
+                     }
+
+                 }
+             ],
 
             ['class' => 'yii\grid\ActionColumn',
                 'template'    => '{view},{update}',
