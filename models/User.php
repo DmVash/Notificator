@@ -132,8 +132,8 @@ class User extends ActiveRecord implements IdentityInterface
         $params['sender'] = Yii::$app->user->id;
         $this->on(NotificationHandler::SEND_BAN_NOTIFICATION, ['app\models\NotificationHandler', 'handleEmailNotification'], $params);
 
-        if($this->status === self::STATUS_DELETED){
-
+        if($this->status == self::STATUS_DELETED){
+            $this->trigger(NotificationHandler::SEND_BAN_NOTIFICATION);
         }
 
     }
