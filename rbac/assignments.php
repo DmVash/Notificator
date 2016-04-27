@@ -22,6 +22,6 @@ return [
         'user',
     ],
     2 => [
-        'user',
+        'admin',
     ],
 ];

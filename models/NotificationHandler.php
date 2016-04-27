@@ -74,7 +74,7 @@ class NotificationHandler extends Component
             $message = Yii::$app->mailer->compose();
             $message->setFrom(Yii::$app->params['adminEmail']);
             $message->setTo($user['email'])
-                ->setSubject($params['subject'])
+                ->setSubject(self::replaceTitlePattern($params['username'], $params))
                 ->setTextBody(self::replaceTextPattern2($user['username'], $params))
                 ->send();
         }
@@ -88,7 +88,7 @@ class NotificationHandler extends Component
         $message = Yii::$app->mailer->compose();
         $message->setFrom(Yii::$app->params['adminEmail']);
         $message->setTo($params['email'])
-            ->setSubject($params['subject'])
+            ->setSubject(self::replaceTitlePattern($params['username'], $params))
             ->setTextBody(self::replaceTextPattern2($params['username'], $params))
             ->send();
     }
@@ -99,7 +99,7 @@ class NotificationHandler extends Component
     {
 
         foreach ($users as $key => $user) {
-            $rows[$key]['title'] = $params['subject'];
+            $rows[$key]['title'] = self::replaceTitlePattern($params['username'], $params);
             $rows[$key]['code'] = $params['code'];
             $rows[$key]['sender_id'] = $params['sender'];
             $rows[$key]['text'] = self::replaceTextPattern2($user['username'], $params);
@@ -112,7 +112,7 @@ class NotificationHandler extends Component
     private function saveNotification($params)
     {
         $browserNotification = new SendingNotifications([
-            'title' => $params['subject'],
+            'title' => self::replaceTitlePattern($params['username'], $params),
             'code' => $params['code'],
             'sender_id' => $params['sender'],
             'text' =>  self::replaceTextPattern2($params['username'], $params),
@@ -156,6 +156,28 @@ class NotificationHandler extends Component
         }
 
         return $text;
+    }
+
+    private function replaceTitlePattern($username, $params)
+    {
+        $patterns = ['{username}', '{sitename}', '{articleName}'];
+        $text = $params['subject'];
+        foreach ($patterns as $pattern) {
+            switch ($pattern) {
+                case '{username}':
+                    $text = str_replace($pattern, $username, $text);
+                    break;
+                case '{sitename}':
+                    $text = str_replace($pattern, Yii::$app->params['siteName'], $text);
+                    break;
+                case '{articleName}':
+                    $text = str_replace($pattern, $params['article_title'], $text);
+                    break;
+            }
+        }
+
+        return $text;
+
     }
 
    /* private function replaceTextPattern($params)

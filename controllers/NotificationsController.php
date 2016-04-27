@@ -18,14 +18,7 @@ class NotificationsController extends Controller
 {
     public function behaviors()
     {
-        /*return [
-            'verbs' => [
-                'class' => VerbFilter::className(),
-                'actions' => [
-                    'delete' => ['post'],
-                ],
-            ],
-        ];*/
+
         return [
             'access' => [
                 'class' => AccessControl::className(),
@@ -35,12 +28,12 @@ class NotificationsController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'view',''],
+                        'actions' => ['logout', 'view', 'admin', 'create', 'index', 'view'],
                         'allow' => true,
                         'roles' => ['admin'],
                     ],
                     [
-                        'actions' => ['logout', 'index',],
+                        'actions' => ['logout', 'index', 'view'],
                         'allow' => true,
                         'roles' => ['user'],
                     ],
@@ -65,6 +58,16 @@ class NotificationsController extends Controller
         ]);
     }
 
+    public function actionAdmin()
+    {
+        $dataProvider = new ActiveDataProvider([
+            'query' => SendingNotifications::find(),
+        ]);
+
+        return $this->render('admin', [
+            'dataProvider' => $dataProvider,
+        ]);
+    }
     /**
      * Displays a single SendingBrowserNotifications model.
      * @param integer $id
@@ -122,19 +125,6 @@ class NotificationsController extends Controller
                 'model' => $model,
             ]);
         }
-    }
-
-    /**
-     * Deletes an existing SendingBrowserNotifications model.
-     * If deletion is successful, the browser will be redirected to the 'index' page.
-     * @param integer $id
-     * @return mixed
-     */
-    public function actionDelete($id)
-    {
-        $this->findModel($id)->delete();
-
-        return $this->redirect(['index']);
     }
 
     /**

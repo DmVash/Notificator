@@ -41,6 +41,12 @@ $codes = ArrayHelper::map($data, 'code', 'code');
     <?= $form->field($model, 'sender_id')->dropDownList($items) ?>
 
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+    <div class="col-lg-offset-1 for-posts" style="color:#999;">
+        Вы можете использовать следующие параметры: {username} - Имя пользователя, {articleName} - название статьи, {sitename} - название сайта
+    </div>
+    <div class="col-lg-offset-1 for-signup" style="color:#999;">
+        Вы можете использовать следующие параметры: {username} - Имя пользователя, {sitename} - название сайта
+    </div>
 
     <?= $form->field($model, 'text')->textarea(['maxlength' => true]) ?>
     <div class="col-lg-offset-1 for-posts" style="color:#999;">

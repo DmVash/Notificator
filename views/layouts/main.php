@@ -37,8 +37,9 @@ AppAsset::register($this);
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'About', 'url' => ['/site/about']],
-            ['label' => 'Contact', 'url' => ['/site/contact']],
+            \Yii::$app->user->can('createNotice') ? (['label' => 'Создание уведомлений', 'url' => ['/notifications/admin']]) : (['label' => 'Просмотр уведомлений', 'url' => ['/notifications/index']]),
+            \Yii::$app->user->can('createPost') ? (['label' => 'Создание и редактирование постов', 'url' => ['/posts/index']]): '',
+            \Yii::$app->user->can('banUser') ? (['label' => 'Пользователи', 'url' => ['/user/index']]): '',
             ['label' => 'Signup', 'url' => ['/site/signup']],
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/site/login']]

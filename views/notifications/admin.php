@@ -14,6 +14,10 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <h1><?= Html::encode($this->title) ?></h1>
 
+    <p>
+        <?= Html::a(Yii::t('app', 'Create Sending Browser Notifications'), ['create'], ['class' => 'btn btn-success']) ?>
+    </p>
+
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
         'columns' => [
@@ -28,14 +32,8 @@ $this->params['breadcrumbs'][] = $this->title;
 
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template'    => '{view}',
+                'template'    => '{view},{update}',
             ],
         ],
-        'rowOptions' => function($model, $key, $index, $grid) {
-            if(!ViewedNotifications::findOne(['user_id' => Yii::$app->user->id, 'notice_id' => $model->id])/*$model->id == '3'*/) {
-                return ['class' => 'alert alert-danger'];
-            }
-
-        }
     ]); ?>
 </div>
