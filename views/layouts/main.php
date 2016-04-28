@@ -37,7 +37,10 @@ AppAsset::register($this);
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             ['label' => 'Home', 'url' => ['/site/index']],
-            ['label' => 'Signup', 'url' => ['/site/signup']],
+            Yii::$app->user->isGuest ? (['label' => 'Signup', 'url' => ['/site/signup']]) : '',
+            !Yii::$app->user->isGuest ? (\Yii::$app->user->can('createNotice') ? (['label' => 'Edit notification', 'url' => ['/notifications/admin']]) : (['label' => 'View notifications', 'url' => ['/notifications/index']])) : (''),
+            !Yii::$app->user->isGuest ? (\Yii::$app->user->can('createPost') ? (['label' => 'Posts', 'url' => ['/posts/index']]): '') : (''),
+            !Yii::$app->user->isGuest ? (\Yii::$app->user->can('banUser') ? (['label' => 'Users', 'url' => ['/user/index']]) : '') : (''),
             Yii::$app->user->isGuest ? (
                 ['label' => 'Login', 'url' => ['/site/login']]
             ) : (
@@ -48,10 +51,10 @@ AppAsset::register($this);
                     ['class' => 'btn btn-link']
                 )
                 . Html::endForm()
-                . '</li>'.\Yii::$app->user->can('createNotice') ? (['label' => 'Edit notification', 'url' => ['/notifications/admin']]) : (['label' => 'View notifications', 'url' => ['/notifications/index']])
-                . \Yii::$app->user->can('createPost') ? (['label' => 'Posts', 'url' => ['/posts/index']]): ''
-                . \Yii::$app->user->can('banUser') ? (['label' => 'Users', 'url' => ['/user/index']]): ''
-            )
+                . '</li>'
+
+            ),
+
         ],
     ]);
     NavBar::end();

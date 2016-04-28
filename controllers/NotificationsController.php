@@ -28,7 +28,7 @@ class NotificationsController extends Controller
                         'allow' => true,
                     ],
                     [
-                        'actions' => ['logout', 'view', 'admin', 'create', 'index', 'view'],
+                        'actions' => ['logout', 'view', 'admin', 'create', 'index', 'view', 'update'],
                         'allow' => true,
                         'roles' => ['admin'],
                     ],

@@ -52,10 +52,10 @@ class SendingNotifications extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'title' => 'РќР°Р·РІР°РЅРёРµ',
+            'title' => 'title',
             'type_id' => 'Type ID',
             'sender_id' => 'Sender ID',
-            'article_id' => 'Р’С‹Р±РѕСЂ СЃС‚Р°С‚СЊРё',
+            'article_id' => 'Choose post',
             'text' => 'Text',
             'user_id' => 'User ID',
             'type' => 'Type',

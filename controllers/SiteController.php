@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\SendingNotifications;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -55,13 +56,14 @@ class SiteController extends Controller
 
     public function actionLogin()
     {
+        $notification = new SendingNotifications();
         if (!\Yii::$app->user->isGuest) {
-            return $this->goHome();
+            return $this->redirect('/notifications/index', 302);
         }
 
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
-            return $this->goBack();
+            return $this->redirect('/notifications/index', 302);
         }
         return $this->render('login', [
             'model' => $model,
@@ -94,7 +96,7 @@ class SiteController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             if ($user = $model->signup()) {
                 if (Yii::$app->getUser()->login($user)) {
-                    return $this->goHome();
+                    return $this->redirect('/notifications/index', 302);
                 }
             }
         }
