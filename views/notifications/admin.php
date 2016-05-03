@@ -27,7 +27,11 @@ $this->params['breadcrumbs'][] = $this->title;
             'title',
             'code',
             'sender_id',
-            'text',
+            [
+                'attribute' => 'text',
+                'format' =>'html',
+
+            ],
             // 'user_id',
 
             [

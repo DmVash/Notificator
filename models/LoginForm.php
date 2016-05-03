@@ -46,18 +46,21 @@ class LoginForm extends Model
         if (!$this->hasErrors()) {
             $user = $this->getUser();
 
-
-
             if (!$user || !$user->validatePassword($this->password)) {
-                $this->addError($attribute, 'Incorrect username or password.');
+                $this->addError($attribute, 'Неверное имя пользователя или пароль');
             }
         }
     }
-
+    /**
+     * Валидация статуса пользователя.
+     *
+     * @param string $attribute the attribute currently being validated
+     * @param array $params the additional name-value pairs given in the rule
+     */
     public function validateStatus($attribute, $params)
     {
         if($this->getStatus() == USER::STATUS_DELETED){
-            $this->addError($attribute, 'You are baned by admin');
+            $this->addError($attribute, 'Ваша учетная запись заблокирована администратором');
         }
     }
 

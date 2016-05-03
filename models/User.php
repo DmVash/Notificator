@@ -24,11 +24,6 @@ use yii\base\NotSupportedException;
 
 class User extends ActiveRecord implements IdentityInterface
 {
-    //public $id;
-    //public $username;
-    //public $password;
-    //public $authKey;
-    //public $accessToken;
 
     const STATUS_DELETED = 0;
     const STATUS_ACTIVE = 10;

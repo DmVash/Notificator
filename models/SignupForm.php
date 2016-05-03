@@ -21,14 +21,14 @@ class SignupForm extends  Model
         return [
             ['username', 'filter', 'filter' => 'trim'],
             ['username', 'required'],
-            ['username', 'unique', 'targetClass' => '\app\models\User', 'message' => '��� ��� ������������ ��� ������'],
+            ['username', 'unique', 'targetClass' => '\app\models\User', 'message' => 'Данное имя пользователя уже занято.'],
             ['username', 'string', 'min' => 2, 'max' => 255],
 
             ['email', 'filter', 'filter' => 'trim'],
             ['email', 'required'],
             ['email', 'email'],
             ['email', 'string', 'max' => 255],
-            ['email', 'unique', 'targetClass' => '\app\models\User', 'message' => '������ ����� ��� ������'],
+            ['email', 'unique', 'targetClass' => '\app\models\User', 'message' => 'Данный email адрес уже занят'],
 
             ['password', 'required'],
             ['password', 'string', 'min' => 6],
@@ -50,16 +50,18 @@ class SignupForm extends  Model
             $user->email = $this->email;
             $user->setPassword($this->password);
             $user->generateAuthKey();
+            $user->save(false);
 
             $params['username'] = $this->username;
             $params['email'] = $this->email;
+            $params['user_id'] = $user->id;
             $params['subject'] = 'Register';
             $params['code'] = 'signup';
-            $params['sender'] = Yii::$app->user->id;
+            $params['sender'] = User::find()->select(['id'])->where(['username' => 'admin'])->one();
             $this->on(NotificationHandler::SEND_SIGNUP_NOTIFICATION, ['app\models\NotificationHandler', 'handleEmailNotification'], $params);
             $this->trigger(NotificationHandler::SEND_SIGNUP_NOTIFICATION);
 
-            $user->save(false);
+
 
             $auth = Yii::$app->authManager;
             $authorRole = $auth->getRole('user');

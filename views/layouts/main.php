@@ -37,12 +37,12 @@ AppAsset::register($this);
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
             ['label' => 'Home', 'url' => ['/site/index']],
-            Yii::$app->user->isGuest ? (['label' => 'Signup', 'url' => ['/site/signup']]) : '',
-            !Yii::$app->user->isGuest ? (\Yii::$app->user->can('createNotice') ? (['label' => 'Edit notification', 'url' => ['/notifications/admin']]) : (['label' => 'View notifications', 'url' => ['/notifications/index']])) : (''),
-            !Yii::$app->user->isGuest ? (\Yii::$app->user->can('createPost') ? (['label' => 'Posts', 'url' => ['/posts/index']]): '') : (''),
-            !Yii::$app->user->isGuest ? (\Yii::$app->user->can('banUser') ? (['label' => 'Users', 'url' => ['/user/index']]) : '') : (''),
+            Yii::$app->user->isGuest ? (['label' => 'Регистрация', 'url' => ['/site/signup']]) : '',
+            !Yii::$app->user->isGuest ? (\Yii::$app->user->can('createNotice') ? (['label' => 'Просмотр уведомлений', 'url' => ['/notifications/admin']]) : (['label' => 'Просмотр уведомлений', 'url' => ['/notifications/index']])) : (''),
+            !Yii::$app->user->isGuest ? (\Yii::$app->user->can('createPost') ? (['label' => 'Записи', 'url' => ['/posts/index']]): '') : (''),
+            !Yii::$app->user->isGuest ? (\Yii::$app->user->can('banUser') ? (['label' => 'Пользователи', 'url' => ['/user/index']]) : '') : (''),
             Yii::$app->user->isGuest ? (
-                ['label' => 'Login', 'url' => ['/site/login']]
+                ['label' => 'Логин', 'url' => ['/site/login']]
             ) : (
                 '<li>'
                 . Html::beginForm(['/site/logout'], 'post')

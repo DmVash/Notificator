@@ -8,15 +8,15 @@ class m160406_135427_create_user extends Migration
     {
         $this->createTable('user', [
             'id' => $this->primaryKey(),
-            'login' => $this->string(),
+            'username' => $this->string(),
             'pass' => $this->string(),
             'email' => $this->string(),
-            'banned' => $this->smallInteger()
+            'auth_key' => $this->string(),
+            'status' => $this->integer()
         ]);
     }
 
     public function down()
-    {
-        $this->dropTable('users');
+    {        $this->dropTable('user');
     }
 }

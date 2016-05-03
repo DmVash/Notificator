@@ -50,7 +50,7 @@ class NotificationsController extends Controller
     public function actionIndex()
     {
         $dataProvider = new ActiveDataProvider([
-            'query' => SendingNotifications::find(),
+            'query' => SendingNotifications::find()->where(['user_id' => Yii::$app->user->id, 'type' => 'browser']),
         ]);
 
         return $this->render('index', [
@@ -97,10 +97,10 @@ class NotificationsController extends Controller
 
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $model->sendNotifications();
-            //return $this->redirect(['view', 'id' => $model->id]);
-            return $this->render('create', [
+            return $this->redirect(['admin']);
+            /*return $this->render('admin', [
                 'model' => $model,
-            ]);
+            ]);*/
         } else {
             return $this->render('create', [
                 'model' => $model,
@@ -131,7 +131,7 @@ class NotificationsController extends Controller
      * Finds the SendingBrowserNotifications model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return SendingBrowserNotifications the loaded model
+     * @return SendingNotifications the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
