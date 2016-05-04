@@ -62,3 +62,4 @@ return [
 -----------------
 
 С учетом ознакомления и освоения фреймворка на работу было затрачено приблизительно 35 часов
+Ссылка на резюме https://docs.google.com/document/d/1D7RhC8QmlCySk-6kNTIO7P5ULfmF5h7gK6RSSgsVd30/edit?usp=sharing
