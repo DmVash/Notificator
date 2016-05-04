@@ -1,102 +1,64 @@
-Yii 2 Basic Project Template
+Middle PHP developer - тестовое задание
 ============================
 
-Yii 2 Basic Project Template is a skeleton [Yii 2](http://www.yiiframework.com/) application best for
-rapidly creating small projects.
-
-The template contains the basic features including user login/logout and a contact page.
-It includes all commonly used configurations that would allow you to focus on adding new
-features to your application.
-
-[![Latest Stable Version](https://poser.pugx.org/yiisoft/yii2-app-basic/v/stable.png)](https://packagist.org/packages/yiisoft/yii2-app-basic)
-[![Total Downloads](https://poser.pugx.org/yiisoft/yii2-app-basic/downloads.png)](https://packagist.org/packages/yiisoft/yii2-app-basic)
-[![Build Status](https://travis-ci.org/yiisoft/yii2-app-basic.svg?branch=master)](https://travis-ci.org/yiisoft/yii2-app-basic)
-
-DIRECTORY STRUCTURE
--------------------
-
-      assets/             contains assets definition
-      commands/           contains console commands (controllers)
-      config/             contains application configurations
-      controllers/        contains Web controller classes
-      mail/               contains view files for e-mails
-      models/             contains model classes
-      runtime/            contains files generated during runtime
-      tests/              contains various tests for the basic application
-      vendor/             contains dependent 3rd-party packages
-      views/              contains view files for the Web application
-      web/                contains the entry script and Web resources
+Использую basic шаблон проекта Yii2 написать небольшое тестовой проект с авторизацией и ролями (админ и пользователь). 
+В проекте на освное системы событий Yii разработать систему уведомлений, которая легко подключается к любым можелям
 
 
+Структура приложения
+--------------------
 
-REQUIREMENTS
+      assets/            
+      commands/           
+      config/             
+      controllers/        
+            /NotificationConttoler.php  контроллер для уведомлений
+            /PostsContoller.php         контроллер статей
+            /UserContoller.php          контроллер администрирований пользователей      
+      models/             
+            /NotificationHandler.php    реализует всю логику отправки уведомлений
+            /Post.php                   модель для статей свзязанная с таблице post
+            /SendingNotifiaction.php    модель для отправленых уведомлений которые записываются в таблицу sending_notification
+            /SignupForm.php             модель формы регистрации
+            /User.php                   модель свзянная с таблицей user
+            /ViewedNotifications.php    модель реализующая просмотр уведомленийпользователями данные записываются в таблицу viewd_notification
+            /Notifications.php           данная модель связана с таблицей notifications в которой хранятся шаблоны уведомлений
+      runtime/            
+      tests/              
+      vendor/             
+      views/             
+      web/
+            /site.js                    дополнительные js скрипты          
+
+
+
+Описание
+--------
+В качестве RBAC manager используется PhpManager, при регистрации пользователь по умолчанию получает роль user, переназначить роль можной в файле `rbac/assignments.php`,
+при логине пользователь попадает на страницу просмотра уведомлений.
+Мной были реализованы все требования поставленные в задании, т.е на данные момент присутсвтуют два типа уведомлений email и browser с возможностью их дальнейшего расширения.
+Админу доступна возможность создания своих уведомлений с выбором типа уведомления его кода, а также выбором адресата или отправки уведомления всем пользователям, 
+также в расположении администратора имеется CRUD для статей, и функция управления пользователями с возможностью забанить пользователя, после чего он получит соответствующее сообщение на свою почту.
+
+
+Конфигурация
 ------------
 
-The minimum requirement by this project template that your Web server supports PHP 5.4.0.
-
-
-INSTALLATION
-------------
-
-### Install from an Archive File
-
-Extract the archive file downloaded from [yiiframework.com](http://www.yiiframework.com/download/) to
-a directory named `basic` that is directly under the Web root.
-
-Set cookie validation key in `config/web.php` file to some random secret string:
-
-```php
-'request' => [
-    // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation
-    'cookieValidationKey' => '<secret random string goes here>',
-],
-```
-
-You can then access the application through the following URL:
-
-~~~
-http://localhost/basic/web/
-~~~
-
-
-### Install via Composer
-
-If you do not have [Composer](http://getcomposer.org/), you may install it by following the instructions
-at [getcomposer.org](http://getcomposer.org/doc/00-intro.md#installation-nix).
-
-You can then install this project template using the following command:
-
-~~~
-php composer.phar global require "fxp/composer-asset-plugin:~1.1.1"
-php composer.phar create-project --prefer-dist --stability=dev yiisoft/yii2-app-basic basic
-~~~
-
-Now you should be able to access the application through the following URL, assuming `basic` is the directory
-directly under the Web root.
-
-~~~
-http://localhost/basic/web/
-~~~
-
-
-CONFIGURATION
--------------
-
-### Database
-
-Edit the file `config/db.php` with real data, for example:
+### База данных
+Миграции находятся в папке `migration`, также на всякий случай я сделал дамп базы `rgk.sql`, который содержится там же
+конфигурация подключения  бд:
 
 ```php
 return [
     'class' => 'yii\db\Connection',
-    'dsn' => 'mysql:host=localhost;dbname=yii2basic',
+    'dsn' => 'mysql:host=localhost;dbname=rgk',
     'username' => 'root',
-    'password' => '1234',
+    'password' => '',
     'charset' => 'utf8',
 ];
 ```
 
-**NOTES:**
-- Yii won't create the database for you, this has to be done manually before you can access it.
-- Check and edit the other files in the `config/` directory to customize your application as required.
-- Refer to the README in the `tests` directory for information specific to basic application tests.
+Затраченное время
+-----------------
+
+С учетом ознакомления и освоения фреймворка на работу было затрачено приблизительно 35 часов
